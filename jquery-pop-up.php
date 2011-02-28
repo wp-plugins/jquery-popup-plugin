@@ -14,7 +14,7 @@ License: GPL
 /* Constants */
 
 define('POP_DIR', rtrim(dirname(__FILE__), '/'));
-define('POP_URL', plugins_url() . '/jquery-pop-up/');
+define('POP_URL', plugins_url() . '/jquery-popup-plugin/');
 define('SITENAME',get_bloginfo('site'));
 
 /*Version Check*/
