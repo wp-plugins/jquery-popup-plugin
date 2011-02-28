@@ -1,0 +1,22 @@
+#jq-popup {
+	padding:5px 20px;
+	border: 1px solid #eee;
+	border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+}
+
+.pClose {
+	position: relative;
+	float: right;
+	top:-5px;
+	right: -45px;
+	height: 16px;
+	width: 16px;
+	z-index: 9999;
+	background:transparent url('fileclose.png') no-repeat;
+}
+
+.pClose:hover {
+	cursor:pointer;
+}
