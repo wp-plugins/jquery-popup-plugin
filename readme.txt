@@ -1,4 +1,4 @@
-=== Pods Widgets ===
+=== Jquery Pop Up Plugin ===
 Contributors: Mike Van Winkle
 Tags: popup, jquery, marketing, conversions, signups, subscribers
 Requires at least: 3.0
