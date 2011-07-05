@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: jQuery Popup
-Version: 0.0.3
+Version: 0.3
 Description: This plugin integrates a modified version of Hvem Glor's bPopup jquery plugin into your WordPress installation. It provides an easy set of options to control the style and behavior of the popup. Options include: more (enable, disable or preview), set cookie, cookie expires, background color, overlay color, vertical position, and delay.
 Author: Mike Van Winkle
 Author URI: http://www.mikevanwinkle.com
