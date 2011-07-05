@@ -20,6 +20,26 @@
 					<textarea id="popup_body" name="popup_body" value="" style="width:90%;height:200px;"><?php echo esc_attr(stripslashes($options['body'])); ?></textarea>
 				</td>
 			</tr>
+			
+			<tr valign="top">
+				<th scope="row"><?php _e('Callback Function','jquery-pop-up'); ?></th>
+				<td>
+					<input type="text" id="popup_callback" name="popup_callback" value="<?php echo esc_attr($options['callback']); ?>" class="regular-text"></input>
+					<br/>
+					<span class="description">If set, this function will be used to display the pop-up instead of the <em>BODY</em>.</span>
+				</td>
+			</tr>
+			
+			<tr valign="top">
+				<th scope="row"><?php _e('Dimensions','jquery-pop-up'); ?></th>
+				<td>
+				<span>Height: </span>
+				<input type="text" id="popup_height" name="popup_height" value="<?php echo esc_attr($options['height']); ?>" class="regular-text" style="width:150px;margin-right:10px;" /> <span>Width: </span> <input type="text" id="popup_width" name="popup_width" value="<?php echo esc_attr($options['width']); ?>" class="regular-text" style="width:150px;"/>
+				<br/>
+				<span class="description">Enter values as 200px or 30%.</span>
+				</td>
+			</tr>			
+			
 			<tr valign="top">
 				<th scope="row"><?php _e('Overlay color','jquery-pop-up'); ?></th>
 				<td>

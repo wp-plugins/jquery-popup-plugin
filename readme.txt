@@ -22,3 +22,9 @@ Upload folder to your plugins directory.
 = 0.1 =
 
 * Initial Version
+
+= 0.3 =
+
+* Code reorganization
+* Bug in cookie
+* Add callback function option

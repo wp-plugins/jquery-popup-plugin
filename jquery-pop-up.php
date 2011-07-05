@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: jQuery Popup
-Version: 0.0.1
+Version: 0.0.3
 Description: This plugin integrates a modified version of Hvem Glor's bPopup jquery plugin into your WordPress installation. It provides an easy set of options to control the style and behavior of the popup. Options include: more (enable, disable or preview), set cookie, cookie expires, background color, overlay color, vertical position, and delay.
 Author: Mike Van Winkle
 Author URI: http://www.mikevanwinkle.com
@@ -17,16 +17,30 @@ define('POP_DIR', rtrim(dirname(__FILE__), '/'));
 define('POP_URL', plugins_url() . '/jquery-popup-plugin/');
 define('SITENAME',get_bloginfo('site'));
 
-/*Version Check*/
-global $wp_version;
-$exit_msg = "Dude, upgrade your stinkin Wordpress Installation.";
-if(version_compare($wp_version, "3.0-Beta", "<")) { exit($exit_msg); }
+/* Activation hook Check*/
+
+function popup_plugin_init() {
+	
+	global $wp_version;
+	$exit_msg = "Dude, upgrade your stinkin Wordpress Installation.";
+	if(version_compare($wp_version, "3.0-Beta", "<")) { exit($exit_msg); }
+	
+	//set default options
+	$options = get_options('popup_options');
+	if(!$options) 
+	{
+	$options = popup_set_default_options(); 
+	update_options('popup_options',$options);
+	}
+	
+	
+}
 
 /*Hooks and Filters*/
 
 add_action('init', 'register_popup_script');
 add_action('admin_menu','popup_settings_init');
-add_action('wp_print_footer_scripts', 'popup_footer_script',10);
+add_action('wp_footer', 'popup_footer_script',10);
 add_action('wp_footer','popup_footer_div');
 add_action('init','popup_cookie_check',1);
 
@@ -65,23 +79,32 @@ function popup_settings_init() {
 function popup_settings_page() { 
 	popup_save_options();
 	$options = get_option('popup_options'); 
-	if(!$options) {
+	if(!$options) 
+	{
+		$options = popup_set_default_options(); 
+	}
+	include('options-page.php');
+}
+
+function popup_set_default_options() {
 		$options = array(
 		'mode' => 'disabled',
 		'header' => '',
 		'body' => '',
-		'overlay' => '#000',
+		'height' => 'auto',
+		'width' => '25%',
+		'overlay' => '#000000',
 		'close' => 'on',
 		'default_style' => 'on',
-		'delay'=> '1000',
+		'delay'=> '10',
 		'vertical'=> 100,
 		'cookie'=> 'on',
 		'expires'=> '3600',
-		'background' => '#fff'
-		); }
-	include('options-page.php');
+		'background' => '#fff',
+		'callback'=> null
+		); 
+	return $options;
 }
-
 
 /**
 **
@@ -94,18 +117,7 @@ function popup_save_options() {
 		if(wp_verify_nonce('save_changes_nonce', '_popup_nonces')) { wp_die('Death to hackers'); } else {
 		
 		// set defaults
-		$options = array(
-			'mode' => 'disabled',
-			'header' => '',
-			'body' => '',
-			'overlay' => '#000',
-			'vertical' => '100',
-			'close' => 'on',
-			'default_style' => 'on',
-			'delay'=>1000,
-			'cookie' => 'on',
-			'expires'=>'3600',
-			'background' => '#fff');
+		$options = popup_set_default_options();
 		
 		//replace defaults with form values
 		foreach($options as $k => $v):
@@ -128,11 +140,20 @@ function popup_save_options() {
 **/
 
 function popup_footer_div() { ?>
-	<?php $options = get_option('popup_options'); ?>
-	<div id="jq-popup" style="display:none; width: 25%; background-color:<?php echo $options['background']; ?>;">
+	<?php $options = get_option('popup_options');  ?>
+	<div id="jq-popup" style="display:none; width:<?php echo $options['width']; ?>; height: <?php echo $options['height']; ?>; background-color:<?php echo $options['background']; ?>;">
 	<?php $popup = get_option('popup_options'); ?>
 	<?php if($options['close'] == 'on') { ?><div class="pClose"></div><?php } ?>
-	<p><?php echo stripslashes($popup['body']); ?></p>
+	<p>
+	<?php 
+	if($popup['callback'] != null) 
+	{ 
+		call_user_func($popup['callback']);
+	} else {
+		echo stripslashes($popup['body']);		
+	} 
+	?>
+	</p>
 	</div>
 <?php
 }
@@ -150,17 +171,18 @@ function popup_footer_script() {
 	// check if is disabled
 		if($options['mode'] == 'enabled' && $popup_cookie != 1) {
 			
+			$array = setup_popup_options();
+			print_popup_script($array);	
+			
+		} elseif($options['mode'] == 'disabled') {
+			//do nothing
+		} else {
+			if($_GET['pop'] == 'preview') 
+			{
 				$array = setup_popup_options();
 				print_popup_script($array);	
-				
-			} elseif($options['mode'] == 'disabled') {
-				//do nothing
-			} else {
-				if($_GET['pop'] == 'preview') {
-					$array = setup_popup_options();
-					print_popup_script($array);	
-				}
 			}
+		}
 }
 
 function setup_popup_options() {
@@ -197,7 +219,7 @@ function print_popup_script($array) {
 **/
 
 function popup_cookie_check() {
-	session_start();
+	if(!session_id()) { session_start(); }
 	$options = get_option('popup_options');
 	$exp = intval($options['expires']);
 	$cookie = $options['cookie'];
